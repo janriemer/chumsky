@@ -207,6 +207,47 @@ where
     go_cfg_extra!(T);
 }
 
+/// Dummy docs
+pub fn recurse<'a, I, E, F, A, OA>(parser_func: F) -> Recurse<F>
+where
+    I: Input<'a>,
+    E: ParserExtra<'a, I>,
+    A: Parser<'a, I, OA, E>,
+    F: Fn() -> A,
+{
+    Recurse { parser_func }
+}
+
+/// Dummy docs
+pub struct Recurse<F> {
+    parser_func: F,
+}
+
+impl<F: Copy> Copy for Recurse<F> {}
+impl<F: Clone> Clone for Recurse<F> {
+    fn clone(&self) -> Self {
+        Self {
+            parser_func: self.parser_func.clone(),
+        }
+    }
+}
+
+impl<'a, I, E, F, A, OA> ParserSealed<'a, I, OA, E> for Recurse<F>
+where
+    I: Input<'a>,
+    E: ParserExtra<'a, I>,
+    A: Parser<'a, I, OA, E>,
+    F: Fn() -> A,
+{
+    #[inline(always)]
+    fn go<M: Mode>(&self, inp: &mut InputRef<'a, '_, I, E>) -> PResult<M, OA> {
+        let a = (self.parser_func)().go::<M>(inp)?;
+        Ok(M::map(a, |a: OA| a))
+    }
+
+    go_extra!(OA);
+}
+
 /// See [`one_of`].
 pub struct OneOf<T, I, E> {
     seq: T,
