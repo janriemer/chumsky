@@ -2,26 +2,24 @@
 name = "chumsky"
 version = "1.0.0-alpha.6"
 description = "A parser library for humans with powerful error recovery"
-authors = ["Joshua Barretto <joshua.s.barretto@gmail.com>", "Elijah Hartvigsen <elijah.reed@hartvigsen.xyz", "Jakob Wiesmore <runetynan@gmail.com>"]
+authors = [
+    "Joshua Barretto <joshua.s.barretto@gmail.com>",
+    "Elijah Hartvigsen <elijah.reed@hartvigsen.xyz",
+    "Jakob Wiesmore <runetynan@gmail.com>",
+]
 repository = "https://github.com/zesterer/chumsky"
 license = "MIT"
 keywords = ["parser", "combinator", "token", "language", "syntax"]
 categories = ["parsing", "text-processing"]
 edition = "2021"
-exclude = [
-    "/misc/*",
-	"/benches/samples/*",
-]
+exclude = ["/misc/*", "/benches/samples/*"]
 build = "build.rs"
 
 [features]
-default = ["std", "spill-stack"]
+default = ["std", "spill-stack", "memoization"]
 
 # Integrate with the standard library.
-std = [
-    "regex-automata?/std",
-    "serde?/std"
-]
+std = ["regex-automata?/std", "serde?/std"]
 
 # Enable nightly-only features like better compiler diagnostics and a Parser impl for ! (the never type).
 nightly = []
@@ -65,7 +63,14 @@ docsrs = ["dep:vergen"]
 # An alias of all features that work with the stable compiler.
 # Do not use this feature, its removal is not considered a breaking change and its behaviour may change.
 # If you're working on chumsky and you're adding a feature that does not require nightly support, please add it to this list.
-_test_stable = ["std", "spill-stack", "memoization", "extension", "label", "sync"]
+_test_stable = [
+    "std",
+    "spill-stack",
+    "memoization",
+    "extension",
+    "label",
+    "sync",
+]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -74,12 +79,28 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 hashbrown = "0.14"
 stacker = { version = "0.1", optional = true }
-regex-automata = { version = "0.3", default-features = false, optional = true, features = ["alloc", "meta", "perf", "unicode", "nfa", "dfa", "hybrid"] }
-spin = { version = "0.9", features = ["once"], default-features = false, optional = true }
-lexical = { version = "6.1.1", default-features = false, features = ["parse-integers", "parse-floats", "format"], optional = true }
+regex-automata = { version = "0.3", default-features = false, optional = true, features = [
+    "alloc",
+    "meta",
+    "perf",
+    "unicode",
+    "nfa",
+    "dfa",
+    "hybrid",
+] }
+spin = { version = "0.9", features = [
+    "once",
+], default-features = false, optional = true }
+lexical = { version = "6.1.1", default-features = false, features = [
+    "parse-integers",
+    "parse-floats",
+    "format",
+], optional = true }
 either = { version = "1.8.1", optional = true }
-serde = { version = "1.0", default-features = false, optional = true, features = ["derive"] }
-unicode-ident =  "1.0.10"
+serde = { version = "1.0", default-features = false, optional = true, features = [
+    "derive",
+] }
+unicode-ident = "1.0.10"
 
 [dev-dependencies]
 ariadne = "0.2"
